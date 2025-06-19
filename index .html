@@ -4,11 +4,41 @@
   <meta charset="UTF-8">
   <title>AI Analizator Tomka</title>
   <style>
-    body { font-family: Arial; background: #101820; color: #eee; text-align: center; padding: 50px; }
-    input, button { padding: 10px; font-size: 16px; width: 80%; max-width: 400px; margin-top: 20px; }
-    button { background-color: #00aaff; color: white; border: none; cursor: pointer; }
-    #wynik { margin-top: 30px; white-space: pre-wrap; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto; }
-    h1 { color: #00eaff; }
+    body {
+      background-color: #0a0f1c;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #00eaff;
+    }
+    input, button {
+      font-size: 18px;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 6px;
+      border: none;
+      width: 80%;
+      max-width: 500px;
+    }
+    button {
+      background-color: #00aaff;
+      color: white;
+      cursor: pointer;
+    }
+    #wynik {
+      margin-top: 30px;
+      white-space: pre-wrap;
+      text-align: left;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #111;
+      padding: 20px;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
@@ -16,19 +46,26 @@
   <input type="text" id="spolka" placeholder="Wpisz nazwę spółki, np. Asbis, CD Projekt...">
   <br>
   <button onclick="analizuj()">Analizuj</button>
-  <div id="wynik"></div>
+  <div id="wynik">...</div>
 
   <script>
     async function analizuj() {
       const spolka = document.getElementById('spolka').value;
-      const response = await fetch('https://fastapi-tomek-1.onrender.com/analiza', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ticker: spolka, okres: '7 dni' })
-      });
+      const wynik = document.getElementById('wynik');
+      wynik.innerText = '⏳ Analizuję...';
 
-      const data = await response.json();
-      document.getElementById('wynik').innerText = data.analiza || data.error || 'Brak odpowiedzi';
+      try {
+        const response = await fetch('https://fastapi-tomek-1.onrender.com/analiza', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ticker: spolka, okres: '7 dni' })
+        });
+
+        const data = await response.json();
+        wynik.innerText = data.analiza || data.error || 'Brak odpowiedzi z serwera';
+      } catch (error) {
+        wynik.innerText = '❌ Błąd połączenia z serwerem backendu!';
+      }
     }
   </script>
 </body>
