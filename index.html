@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Analizator Tomka</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #101820;
+      color: #eee;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      color: #00eaff;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 400px;
+      margin-top: 20px;
+    }
+    button {
+      background-color: #00aaff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #wynik {
+      margin-top: 30px;
+      white-space: pre-wrap;
+      text-align: left;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      border: 1px solid #444;
+      padding: 20px;
+      background-color: #1e1e2f;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 AI Analizator Tomka</h1>
+  <input type="text" id="spolka" placeholder="Wpisz nazwę spółki, np. Asbis, CD Projekt, Bioceltix...">
+  <br>
+  <button onclick="analizuj()">Analizuj</button>
+  <div id="wynik">📊 Tu pojawi się analiza spółki...</div>
+
+  <script>
+    async function analizuj() {
+      const spolka = document.getElementById('spolka').value.trim();
+      const wynikDiv = document.getElementById('wynik');
+      if (!spolka) {
+        wynikDiv.innerText = "⚠️ Podaj nazwę spółki!";
+        return;
+      }
+
+      wynikDiv.innerText = "⏳ Trwa analiza spółki '" + spolka + "'...";
+
+      try {
+        const response = await fetch('https://fastapi-tomek-1.onrender.com/analiza', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ticker: spolka, okres: '7 dni' })
+        });
+
+        if (!response.ok) {
+          wynikDiv.innerText = "❌ Błąd serwera: " + response.statusText;
+          return;
+        }
+
+        const data = await response.json();
+        wynikDiv.innerText = data.analiza || data.error || "❓ Brak danych.";
+      } catch (error) {
+        wynikDiv.innerText = "🚫 Błąd połączenia: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
