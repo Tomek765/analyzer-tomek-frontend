@@ -59,8 +59,8 @@
 
       wynikDiv.innerText = "⏳ Trwa analiza spółki '" + spolka + "'...";
 
-      try {
-        const response = await fetch('https://fastapi-tomek-1.onrender.com/analiza', {
+      try {const response = await fetch('https://fastapi-tomek.onrender.com/analiza', {
+
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ticker: spolka, okres: '7 dni' })
